@@ -1,0 +1,27 @@
+{
+  "name": "simple-crud-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@gravity-ui/icons": "^2.23.1",
+    "@heroui/react": "^3.2.7",
+    "@heroui/styles": "^3.2.7",
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@iconify-json/gravity-ui": "^1.2.15",
+    "@tailwindcss/turbopack": "^4",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "tailwindcss": "^4"
+  }
+}
