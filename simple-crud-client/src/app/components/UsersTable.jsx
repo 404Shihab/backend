@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Table, Chip, Button, Tooltip, Avatar } from "@heroui/react";
-import { Pencil, TrashBin } from "@gravity-ui/icons";
+import { Pencil, TrashBin, Eye } from "@gravity-ui/icons";
 
 const getInitials = (name) =>
     name
@@ -12,6 +13,8 @@ const getInitials = (name) =>
         .toUpperCase();
 
 const UsersTable = ({ users = [], onEdit, onDelete }) => {
+    const router = useRouter();
+
     return (
         <div className="w-full overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
             {/* Header */}
@@ -82,6 +85,17 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
 
                                     <Table.Cell>
                                         <div className="flex items-center justify-end gap-1">
+                                            <Button
+                                                size="sm"
+                                                variant="secondary"
+                                                onPress={() =>
+                                                    router.push(`/users/${user._id}`)
+                                                }
+                                            >
+                                                <Eye width={16} height={16} />
+                                                Details
+                                            </Button>
+
                                             <Tooltip delay={0}>
                                                 <Button
                                                     isIconOnly
