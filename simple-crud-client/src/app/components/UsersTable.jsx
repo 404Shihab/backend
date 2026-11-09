@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Chip, Button, Tooltip, Avatar } from "@heroui/react";
+import { Table, Chip, Button, Tooltip, Avatar, AlertDialog } from "@heroui/react";
 import { Pencil, TrashBin, Eye } from "@gravity-ui/icons";
 
 const getInitials = (name) =>
@@ -14,6 +15,12 @@ const getInitials = (name) =>
 
 const UsersTable = ({ users = [], onEdit, onDelete }) => {
     const router = useRouter();
+    const [userToDelete, setUserToDelete] = useState(null);
+
+    const handleConfirmDelete = () => {
+        onDelete?.(userToDelete);
+        setUserToDelete(null);
+    };
 
     return (
         <div className="w-full overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
@@ -118,7 +125,7 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
                                                     variant="ghost"
                                                     className="text-danger"
                                                     aria-label="Delete user"
-                                                    onPress={() => onDelete?.(user)}
+                                                    onPress={() => setUserToDelete(user)}
                                                 >
                                                     <TrashBin width={16} height={16} />
                                                 </Button>
@@ -134,6 +141,44 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
                     </Table.Content>
                 </Table.ScrollContainer>
             </Table>
+
+            {/* Delete confirmation */}
+            <AlertDialog.Backdrop
+                isOpen={!!userToDelete}
+                onOpenChange={(open) => {
+                    if (!open) setUserToDelete(null);
+                }}
+            >
+                <AlertDialog.Container>
+                    <AlertDialog.Dialog className="sm:max-w-[420px]">
+                        <AlertDialog.CloseTrigger />
+                        <AlertDialog.Header>
+                            <AlertDialog.Icon status="danger" />
+                            <AlertDialog.Heading>
+                                Delete this user?
+                            </AlertDialog.Heading>
+                        </AlertDialog.Header>
+                        <AlertDialog.Body>
+                            <p>
+                                You are about to delete{" "}
+                                <span className="font-semibold">
+                                    {userToDelete?.name}
+                                </span>{" "}
+                                ({userToDelete?.email}). This action cannot be
+                                undone.
+                            </p>
+                        </AlertDialog.Body>
+                        <AlertDialog.Footer>
+                            <Button slot="close" variant="tertiary">
+                                Cancel
+                            </Button>
+                            <Button variant="danger" onPress={handleConfirmDelete}>
+                                Delete
+                            </Button>
+                        </AlertDialog.Footer>
+                    </AlertDialog.Dialog>
+                </AlertDialog.Container>
+            </AlertDialog.Backdrop>
         </div>
     );
 };
