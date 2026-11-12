@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, Chip, Button, Tooltip, Avatar, AlertDialog } from "@heroui/react";
 import { Pencil, TrashBin, Eye } from "@gravity-ui/icons";
 
+
 const getInitials = (name) =>
     name
         .split(" ")
@@ -14,6 +15,10 @@ const getInitials = (name) =>
         .toUpperCase();
 
 const UsersTable = ({ users = [], onEdit, onDelete }) => {
+
+    const handleDelete = async (userId)=>{
+        await deleteUserAction(userId);
+    }
     const router = useRouter();
     const [userToDelete, setUserToDelete] = useState(null);
 
@@ -126,6 +131,7 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
                                                     className="text-danger"
                                                     aria-label="Delete user"
                                                     onPress={() => setUserToDelete(user)}
+                                                    onClick={()=>handleDelete(user._id)}
                                                 >
                                                     <TrashBin width={16} height={16} />
                                                 </Button>

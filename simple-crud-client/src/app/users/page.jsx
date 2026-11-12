@@ -1,6 +1,7 @@
 import React from "react";
 import { getUsers } from "../lib/data";
 import UsersTable from "../components/UsersTable";
+import { deleteUser } from "../lib/actions";
 
 
 const UsersPage = async () => {
@@ -11,8 +12,7 @@ const UsersPage = async () => {
             <h2 className="text-2xl font-semibold mb-6">
                 User Management
             </h2>
-
-            <UsersTable users={users}></UsersTable>
+            <UsersTable users={users} deleteUserAction={deleteUser}></UsersTable>
         </div>
     );
 };
