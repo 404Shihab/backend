@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, Chip, Button, Tooltip, Avatar, AlertDialog } from "@heroui/react";
 import { Pencil, TrashBin, Eye } from "@gravity-ui/icons";
 
-
-const getInitials = (name) =>
+const getInitials = (name = "") =>
     name
         .split(" ")
         .map((n) => n[0])
@@ -14,17 +13,25 @@ const getInitials = (name) =>
         .join("")
         .toUpperCase();
 
-const UsersTable = ({ users = [], onEdit, onDelete }) => {
-
-    const handleDelete = async (userId)=>{
-        await deleteUserAction(userId);
-    }
+const UsersTable = ({ users = [], onEdit, deleteUserAction }) => {
     const router = useRouter();
     const [userToDelete, setUserToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleConfirmDelete = () => {
-        onDelete?.(userToDelete);
-        setUserToDelete(null);
+    const handleConfirmDelete = async () => {
+        if (!userToDelete) return;
+
+        try {
+            setIsDeleting(true);
+            const result = await deleteUserAction?.(userToDelete._id);
+            if (result?.deletedCount > 0) {
+                setUserToDelete(null);
+            }
+        } catch (err) {
+            console.error("Failed to delete user:", err);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -131,7 +138,6 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
                                                     className="text-danger"
                                                     aria-label="Delete user"
                                                     onPress={() => setUserToDelete(user)}
-                                                    onClick={()=>handleDelete(user._id)}
                                                 >
                                                     <TrashBin width={16} height={16} />
                                                 </Button>
@@ -152,7 +158,7 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
             <AlertDialog.Backdrop
                 isOpen={!!userToDelete}
                 onOpenChange={(open) => {
-                    if (!open) setUserToDelete(null);
+                    if (!open && !isDeleting) setUserToDelete(null);
                 }}
             >
                 <AlertDialog.Container>
@@ -175,11 +181,19 @@ const UsersTable = ({ users = [], onEdit, onDelete }) => {
                             </p>
                         </AlertDialog.Body>
                         <AlertDialog.Footer>
-                            <Button slot="close" variant="tertiary">
+                            <Button
+                                slot="close"
+                                variant="tertiary"
+                                isDisabled={isDeleting}
+                            >
                                 Cancel
                             </Button>
-                            <Button variant="danger" onPress={handleConfirmDelete}>
-                                Delete
+                            <Button
+                                variant="danger"
+                                onPress={handleConfirmDelete}
+                                isDisabled={isDeleting}
+                            >
+                                {isDeleting ? "Deleting..." : "Delete"}
                             </Button>
                         </AlertDialog.Footer>
                     </AlertDialog.Dialog>
